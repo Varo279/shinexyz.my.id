@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="astra">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHINEXYZ // ASTRA-OMEGA — Spatial OS & Motion Studio</title>
+  <style>
+    :root, [data-theme="astra"] {
+      --bg-base: #06070b;
+      --bg-surface: rgba(16, 19, 30, 0.72);
+      --bg-card: rgba(23, 27, 44, 0.65);
+      --bg-hover: rgba(40, 48, 78, 0.55);
+      --text-main: #f3f6ff;
+      --text-muted: #8f9bb7;
+      --accent-1: #6366f1;
+      --accent-2: #06b6d4;
+      --accent-3: #ec4899;
+      --border-col: rgba(255, 255, 255, 0.1);
+      --glow: 0 0 35px rgba(99, 102, 241, 0.35);
+    }
+
+    [data-theme="light"] {
+      --bg-base: #f7f6f2;
+      --bg-surface: rgba(255, 255, 255, 0.85);
+      --bg-card: rgba(255, 255, 255, 0.92);
+      --bg-hover: rgba(235, 233, 226, 0.8);
+      --text-main: #191919;
+      --text-muted: #6b6b6b;
+      --accent-1: #2563eb;
+      --accent-2: #0d9488;
+      --accent-3: #db2777;
+      --border-col: rgba(0, 0, 0, 0.1);
+      --glow: 0 10px 30px rgba(37, 99, 235, 0.15);
+    }
+
+    [data-theme="solaris"] {
+      --bg-base: #0c0905;
+      --bg-surface: rgba(28, 20, 12, 0.78);
+      --bg-card: rgba(38, 26, 15, 0.68);
+      --bg-hover: rgba(65, 45, 24, 0.6);
+      --text-main: #fff8eb;
+      --text-muted: #bda482;
+      --accent-1: #f59e0b;
+      --accent-2: #ef4444;
+      --accent-3: #fbbf24;
+      --border-col: rgba(245, 158, 11, 0.2);
+      --glow: 0 0 35px rgba(245, 158, 11, 0.3);
+    }
+
+    [data-theme="matrix"] {
+      --bg-base: #030a06;
+      --bg-surface: rgba(8, 24, 15, 0.78);
+      --bg-card: rgba(12, 34, 21, 0.68);
+      --bg-hover: rgba(20, 58, 35, 0.6);
+      --text-main: #e6fffa;
+      --text-muted: #68a889;
+      --accent-1: #10b981;
+      --accent-2: #34d399;
+      --accent-3: #059669;
+      --border-col: rgba(16, 185, 129, 0.22);
+      --glow: 0 0 35px rgba(16, 185, 129, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--bg-base);
+      transition: background 0.35s ease, color 0.35s ease;
+    }
+
+    /* Ambient Cursor Spotlight */
+    #ambient-glow {
+      position: fixed;
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-1) 0%, transparent 70%);
+      opacity: 0.14;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      transition: width 0.2s, height 0.2s;
+    }
+
+    /* Top Navigation Bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 2rem;
+      background: var(--bg-surface);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border-col);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      font-size: 1rem;
+    }
+
+    .brand-orb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      box-shadow: 0 0 12px var(--accent-1);
+      animation: pulseOrb 2s infinite alternate;
+    }
+
+    @keyframes pulseOrb {
+      from { transform: scale(0.9); opacity: 0.8; }
+      to { transform: scale(1.25); opacity: 1; }
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-main);
+      background: var(--bg-hover);
+    }
+
+    .theme-Controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: 1px solid var(--border-col);
+      background: var(--bg-card);
+      color: var(--text-main);
+      padding: 0.48rem 0.9rem;
+      border-radius: 9px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn:hover {
+      border-color: var(--accent-1);
+      transform: translateY(-1px);
+      box-shadow: var(--glow);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: #fff;
+      border: none;
+    }
+
+    /* Layout Container */
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 6rem;
+    }
+
+    /* Hero 3D Spatial Section */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 2rem;
+      align-items: center;
+      min-height: 76vh;
+      padding: 1rem 0 2rem;
+    }
+
+    @media (max-width: 960px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--bg-card);
+      border: 1px solid var(--border-col);
+      color: var(--accent-2);
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.3rem, 5vw, 4.1rem);
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.1rem;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      margin-bottom: 1.6rem;
+      max-width: 560px;
+    }
+
+    .shape-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .shape-btn.active {
+      background: var(--accent-1);
+      color: #fff;
+      border-color: var(--accent-1);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.9rem;
+      margin-top: 1.6rem;
+    }
+
+    .stat-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-col);
+      border-radius: 12px;
+      padding: 0.9rem;
+    }
+
+    .stat-val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--accent-2);
+    }
+
+    .stat-lbl {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* 3D Interactive Stage Card */
+    .stage-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-col);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--glow);
+      height: 490px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 1.2rem;
+      border-bottom: 1px solid var(--border-col);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .window-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    #coreCanvas {
+      width: 100%;
+      flex: 1;
+      cursor: grab;
+      display: block;
+    }
+
+    #coreCanvas:active {
+      cursor: grabbing;
+    }
+
+    .stage-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1.2rem;
+      border-top: 1px solid var(--border-col);
+      background: var(--bg-surface);
+      font-size: 0.78rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* Kinetic Marquee */
+    .marquee-wrap {
+      overflow: hidden;
+      white-space: nowrap;
+      border-top: 1px solid var(--border-col);
+      border-bottom: 1px solid var(--border-col);
+      padding: 0.85rem 0;
+      margin: 2.5rem 0;
+      background: var(--bg-surface);
+    }
+
+    .marquee-track {
+      display: inline-block;
+      animation: scrollMarquee 24s linear infinite;
+      font-weight: 800;
+      font-size: 0.88rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
+
+    @keyframes scrollMarquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* Section Header */
+    .sec-head {
+      margin: 3.5rem 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .sec-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .sec-sub {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.3rem;
+    }
+
+    /* Section 1: Notion Spatial Workspace */
+    .notion-shell {
+      background: var(--bg-card);
+      border: 1px solid var(--border-col);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--glow);
+    }
+
+    .notion-banner {
+      height: 135px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 1rem;
+      background: linear-gradient(120deg, var(--accent-1), var(--accent-2), var(--accent-3));
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .notion-body {
+      padding: 1.8rem;
+    }
+
+    .notion-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .notion-icon {
+      font-size: 2.2rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .notion-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      outline: none;
+      border-bottom: 1px dashed transparent;
+      flex: 1;
+    }
+
+    .notion-title:focus {
+      border-bottom-color: var(--accent-1);
+    }
+
+    .toolbar-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--border-col);
+      margin-bottom: 1.4rem;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 860px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .block-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .notion-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-col);
+      border-radius: 11px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      animation: popIn 0.25s ease;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .kanban-cols {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .kanban-col {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-col);
+      border-radius: 12px;
+      padding: 0.75rem;
+      min-height: 220px;
+    }
+
+    .kanban-col h4 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 0.65rem;
+    }
+
+    .k-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-col);
+      border-radius: 8px;
+      padding: 0.65rem;
+      font-size: 0.82rem;
+      margin-bottom: 0.55rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .k-card:hover {
+      border-color: var(--accent-2);
+      transform: translateY(-2px);
+    }
+
+    /* Section 2: Multimodal Motion & Node Studio */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .studio-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-col);
+      border-radius: 18px;
+      padding: 1.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .canvas-box {
+      width: 100%;
+      height: 300px;
+      border-radius: 12px;
+      border: 1px solid var(--border-col);
+      background: #05070e;
+      display: block;
+      cursor: pointer;
+    }
+
+    /* Section 3: Audio Synthesizer & Sequencer */
+    .synth-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .synth-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .seq-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 0.45rem;
+      margin-top: 0.5rem;
+    }
+
+    .seq-cell {
+      height: 36px;
+      border-radius: 7px;
+      border: 1px solid var(--border-col);
+      background: var(--bg-surface);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .seq-cell.active {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      box-shadow: 0 0 12px var(--accent-1);
+    }
+
+    .seq-cell.playing {
+      outline: 2px solid #fff;
+    }
+
+    /* Command Palette Modal */
+    .cmd-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .cmd-backdrop.open {
+      display: flex;
+    }
+
+    .cmd-modal {
+      width: 100%;
+      max-width: 520px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-col);
+      border-radius: 16px;
+      padding: 1.2rem;
+      box-shadow: var(--glow);
+    }
+
+    .cmd-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin-top: 0.9rem;
+    }
+
+    .cmd-item {
+      padding: 0.7rem 0.9rem;
+      border-radius: 9px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-col);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+    }
+
+    .cmd-item:hover {
+      border-color: var(--accent-1);
+      background: var(--bg-hover);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border-col);
+      margin-top: 4rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="ambient-glow"></div>
+
+  <!-- Top Navigation -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-orb"></span>
+      <span>SHINEXYZ // ASTRA-OMEGA</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#hero">3D Core</a>
+      <a href="#workspace">Notion OS</a>
+      <a href="#motion-studio">Motion & Nodes</a>
+      <a href="#audio-lab">Sonic Matrix</a>
+    </nav>
+    <div class="theme-Controls">
+      <button class="btn" onclick="setTheme('astra')">Astra</button>
+      <button class="btn" onclick="setTheme('light')">Paper</button>
+      <button class="btn" onclick="setTheme('solaris')">Solaris</button>
+      <button class="btn" onclick="setTheme('matrix')">Matrix</button>
+      <button class="btn btn-primary" onclick="toggleCmd()">⌘K</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HERO SECTION -->
+    <section id="hero" class="hero-grid">
+      <div>
+        <div class="badge">● SYSTEM ONLINE // SHINEXYZ.MY.ID</div>
+        <h1 class="hero-title">
+          Sentient Spatial <span class="gradient-text">Motion & Workspace</span> Engine.
+        </h1>
+        <p class="hero-desc">
+           Eksperimen visual interaktif generasi baru untuk <strong>shinexyz.my.id</strong>. Menggabungkan mesin proyeksi 3D real-time, ruang kerja modular bergaya Notion, grafik node Bezier, dan synthesizer frekuensi spasial.
+        </p>
+
+        <div class="shape-selector">
+          <button class="btn shape-btn active" onclick="changeShape('sphere', this)">01 // Neural Sphere</button>
+          <button class="btn shape-btn" onclick="changeShape('tesseract', this)">02 // 4D Tesseract</button>
+          <button class="btn shape-btn" onclick="changeShape('helix', this)">03 // DNA Helix</button>
+          <button class="btn shape-btn" onclick="changeShape('torus', this)">04 // Singularity Torus</button>
+        </div>
+
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="triggerOverclock()">⚡ OVERCLOCK OMEGA</button>
+          <button class="btn" onclick="playChord([261.63, 329.63, 392.00, 523.25])">🔊 Test Spatial Chord</button>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-box">
+            <div class="stat-val" id="fpsCounter">60 FPS</div>
+            <div class="stat-lbl">Render Engine</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="nodeCounter">180</div>
+            <div class="stat-lbl">Active 3D Vertices</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val">0.02 ms</div>
+            <div class="stat-lbl">Edge Latency</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D STAGE -->
+      <div class="stage-card">
+        <div class="stage-header">
+          <div class="window-dots">
+            <span style="background:#ef4444"></span>
+            <span style="background:#f59e0b"></span>
+            <span style="background:#10b981"></span>
+          </div>
+          <span>ASTRA-3D PROJECTION KERNEL // DRAG TO ROTATE</span>
+          <span id="shapeLabel">MODE: SPHERE</span>
+        </div>
+        <canvas id="coreCanvas"></canvas>
+        <div class="stage-footer">
+          <label style="display:flex; align-items:center; gap:0.5rem;">
+            Warp Speed:
+            <input type="range" id="warpSlider" min="0.2" max="4" step="0.1" value="1" />
+          </label>
+          <span>Klik & tahan kanvas untuk memutar 360°</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- KINETIC MARQUEE -->
+    <div class="marquee-wrap">
+      <div class="marquee-track">
+        SHINEXYZ.MY.ID // ASTRA-OMEGA SPATIAL OS &nbsp;✦&nbsp; REAL-TIME 3D GEOMETRY &nbsp;✦&nbsp; NOTION MODULAR WORKSPACE &nbsp;✦&nbsp; PROCEDURAL MOTION GRAPHICS &nbsp;✦&nbsp; WEB AUDIO SYNTHESIS &nbsp;✦&nbsp; SHINEXYZ.MY.ID // ASTRA-OMEGA SPATIAL OS &nbsp;✦&nbsp; REAL-TIME 3D GEOMETRY &nbsp;✦&nbsp; NOTION MODULAR WORKSPACE &nbsp;✦&nbsp;
+      </div>
+    </div>
+
+    <!-- SECTION 1: NOTION SPATIAL WORKSPACE -->
+    <section id="workspace">
+      <div class="sec-head">
+        <div>
+          <h2 class="sec-title">01 // Notion Spatial Workspace</h2>
+          <p class="sec-sub">Edit judul langsung, tambahkan blok interaktif, atau pindahkan kartu tugas di papan Kanban.</p>
+        </div>
+      </div>
+
+      <div class="notion-shell">
+        <div class="notion-banner" id="notionBanner">
+          <button class="btn" onclick="cycleBanner()">🎨 Ganti Gradien Banner</button>
+        </div>
+        <div class="notion-body">
+          <div class="notion-title-row">
+            <span class="notion-icon" onclick="cycleIcon()" id="pageIcon">🚀</span>
+            <div class="notion-title" contenteditable="true" spellcheck="false">
+              SHINEXYZ Command Center & Motion Roadmap
+            </div>
+          </div>
+
+          <div class="toolbar-row">
+            <button class="btn" onclick="addBlock('callout')">+ 💡 Callout Insight</button>
+            <button class="btn" onclick="addBlock('todo')">+ ✅ Action Checklist</button>
+            <button class="btn" onclick="addBlock('metric')">+ 📊 Live Telemetry Pulse</button>
+            <button class="btn" onclick="addBlock('code')">+ 💻 Deploy Snippet</button>
+          </div>
+
+          <div class="workspace-grid">
+            <!-- Left: Dynamic Blocks -->
+            <div class="block-list" id="blockList">
+              <div class="notion-block">
+                <span>💡 <strong>Sistem Aktif:</strong> Domain <code>shinexyz.my.id</code> berjalan dengan arsitektur ASTRA-OMEGA.</span>
+                <button class="btn" onclick="this.parentElement.remove()">✕</button>
+              </div>
+              <div class="notion-block">
+                <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;">
+                  <input type="checkbox" checked onchange="playTick()" />
+                  <span>Konfigurasi Nginx & SSL Let's Encrypt di VPS</span>
+                </label>
+                <button class="btn" onclick="this.parentElement.remove()">✕</button>
+              </div>
+              <div class="notion-block">
+                <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;">
+                  <input type="checkbox" onchange="playTick()" />
+                  <span>Eksplorasi semua fitur Motion Graphics & Synthesizer di halaman ini</span>
+                </label>
+                <button class="btn" onclick="this.parentElement.remove()">✕</button>
+              </div>
+            </div>
+
+            <!-- Right: Interactive Kanban -->
+            <div>
+              <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.6rem;color:var(--text-muted);">
+                KLIK KARTU UNTUK MEMINDAHKAN TAHAP PROYEK:
+              </div>
+              <div class="kanban-cols">
+                <div class="kanban-col" id="col-0">
+                  <h4>📌 Backlog</h4>
+                  <div class="k-card" onclick="advanceCard(this)" data-col="0">Integrasi Custom Shader</div>
+                  <div class="k-card" onclick="advanceCard(this)" data-col="0">Optimasi Edge Caching</div>
+                </div>
+                <div class="kanban-col" id="col-1">
+                  <h4>⚡ In Motion</h4>
+                  <div class="k-card" onclick="advanceCard(this)" data-col="1">Motion UI Choreography</div>
+                </div>
+                <div class="kanban-col" id="col-2">
+                  <h4>🚀 Shipped</h4>
+                  <div class="k-card" onclick="advanceCard(this)" data-col="2">Deploy shinexyz.my.id</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: MOTION GRAPHICS & BEZIER NODE STUDIO -->
+    <section id="motion-studio">
+      <div class="sec-head">
+        <div>
+          <h2 class="sec-title">02 // Interactive Motion & Neural Node Studio</h2>
+          <p class="sec-sub">Geser node di sebelah kiri untuk mengubah alur kurva Bezier, atau klik kanvas kanan untuk memicu gravitasi partikel.</p>
+        </div>
+      </div>
+
+      <div class="studio-grid">
+        <!-- Bezier Node Graph -->
+        <div class="studio-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong>Bezier Neural Node Graph (Drag Kotak Node)</strong>
+            <button class="btn btn-primary" onclick="spawnDataPackets()">⚡ Pulse Data Flow</button>
+          </div>
+          <canvas id="nodeCanvas" class="canvas-box"></canvas>
+        </div>
+
+        <!-- Gravity Vortex Sandbox -->
+        <div class="studio-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong>Orbital Gravity Motion Sandbox (Klik/Gerakkan Kursor)</strong>
+            <button class="btn" onclick="burstParticles()">💥 Supernova Burst</button>
+          </div>
+          <canvas id="vortexCanvas" class="canvas-box"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: POLYPHONIC AUDIO SYNTH & SEQUENCER -->
+    <section id="audio-lab">
+      <div class="sec-head">
+        <div>
+          <h2 class="sec-title">03 // Polyphonic Spatial Sound Matrix</h2>
+          <p class="sec-sub">Susun ketukan melodi di 8-Step Sequencer atau geser kursor di XY Frequency Pad untuk menghasilkan suara sci-fi.</p>
+        </div>
+      </div>
+
+      <div class="synth-grid">
+        <div class="studio-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+            <strong>4-Track Cyber Sequencer</strong>
+            <div style="display:flex;gap:0.5rem;">
+              <button class="btn btn-primary" id="seqPlayBtn" onclick="toggleSequencer()">▶ Play Loop</button>
+              <button class="btn" onclick="randomizeSequencer()">🎲 Randomize</button>
+            </div>
+          </div>
+          <div id="seqContainer" style="display:flex;flex-direction:column;gap:0.55rem;margin-top:0.4rem;"></div>
+        </div>
+
+        <div class="studio-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong>XY Kaoss Frequency Pad (Klik & Geser)</strong>
+            <span id="freqReadout" style="font-size:0.8rem;color:var(--accent-2);">440 Hz</span>
+          </div>
+          <canvas id="xyCanvas" class="canvas-box" style="height:220px;"></canvas>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- COMMAND PALETTE MODAL -->
+  <div class="cmd-backdrop" id="cmdModal" onclick="if(event.target===this) toggleCmd()">
+    <div class="cmd-modal">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <strong>⚡ SHINEXYZ Command Palette</strong>
+        <button class="btn" onclick="toggleCmd()">ESC</button>
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item" onclick="triggerOverclock(); toggleCmd();">
+          <span>⚡ Trigger Overclock Omega Shockwave</span><span>ENTER</span>
+        </div>
+        <div class="cmd-item" onclick="setTheme('astra'); toggleCmd();">
+          <span>🌌 Switch Theme: Astra Dark</span><span>THEME</span>
+        </div>
+        <div class="cmd-item" onclick="setTheme('light'); toggleCmd();">
+          <span>📄 Switch Theme: Notion Warm Paper</span><span>THEME</span>
+        </div>
+        <div class="cmd-item" onclick="setTheme('solaris'); toggleCmd();">
+          <span>☀️ Switch Theme: Solaris Gold</span><span>THEME</span>
+        </div>
+        <div class="cmd-item" onclick="setTheme('matrix'); toggleCmd();">
+          <span>🟢 Switch Theme: Bio Matrix</span><span>THEME</span>
+        </div>
+        <div class="cmd-item" onclick="randomizeSequencer(); toggleCmd();">
+          <span>🎵 Generate Random Synth Pattern</span><span>AUDIO</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    SHINEXYZ // ASTRA-OMEGA SPATIAL ENGINE — Didesain khusus untuk <strong>shinexyz.my.id</strong>
+  </footer>
+
+  <script>
+    /* =========================================================
+       1. THEME, AMBIENT GLOW & COMMAND PALETTE
+       ========================================================= */
+    const glowEl = document.getElementById('ambient-glow');
+    window.addEventListener('mousemove', (e) => {
+      glowEl.style.left = e.clientX + 'px';
+      glowEl.style.top = e.clientY + 'px';
+    });
+
+    function setTheme(themeName) {
+      document.documentElement.setAttribute('data-theme', themeName);
+      playTick(520);
+    }
+
+    function toggleCmd() {
+      document.getElementById('cmdModal').classList.toggle('open');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        toggleCmd();
+      } else if (e.key === 'Escape') {
+        document.getElementById('cmdModal').classList.remove('open');
+      }
+    });
+
+    /* =========================================================
+       2. WEB AUDIO SYNTHESIZER ENGINE
+       ========================================================= */
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playTick(freq = 660, duration = 0.07, type = 'sine') {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playChord(notes) {
+      notes.forEach((n, idx) => {
+        setTimeout(() => playTick(n, 0.45, 'triangle'), idx * 55);
+      });
+    }
+
+    /* =========================================================
+       3. REAL-TIME 3D PROJECTION ENGINE (HERO CANVAS)
+       ========================================================= */
+    const coreCanvas = document.getElementById('coreCanvas');
+    const ctx3d = coreCanvas.getContext('2d');
+    let vertices = [];
+    let currentShape = 'sphere';
+    let rotX = 0.3, rotY = 0.5;
+    let isDraggingCore = false, lastMouseX = 0, lastMouseY = 0;
+    let shockwaveRadius = 0;
+
+    function resizeCore() {
+      const rect = coreCanvas.parentElement.getBoundingClientRect();
+      coreCanvas.width = rect.width;
+      coreCanvas.height = 380;
+    }
+    window.addEventListener('resize', resizeCore);
+    resizeCore();
+
+    function buildShape(type) {
+      vertices = [];
+      const count = 160;
+      if (type === 'sphere') {
+        for (let i = 0; i < count; i++) {
+          const phi = Math.acos(1 - 2 * (i + 0.5) / count);
+          const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+          const r = 135;
+          vertices.push({
+            x: r * Math.sin(phi) * Math.cos(theta),
+            y: r * Math.sin(phi) * Math.sin(theta),
+            z: r * Math.cos(phi)
+          });
+        }
+      } else if (type === 'tesseract') {
+        const sizes = [70, 135];
+        sizes.forEach(s => {
+          for (let x = -1; x <= 1; x += 2) {
+            for (let y = -1; y <= 1; y += 2) {
+              for (let z = -1; z <= 1; z += 2) {
+                vertices.push({ x: x * s, y: y * s, z: z * s });
+              }
+            }
+          }
+        });
+        for (let i = 0; i < 110; i++) {
+          vertices.push({
+            x: (Math.random() - 0.5) * 240,
+            y: (Math.random() - 0.5) * 240,
+            z: (Math.random() - 0.5) * 240
+          });
+        }
+      } else if (type === 'helix') {
+        for (let i = 0; i < count; i++) {
+          const t = (i / count) * Math.PI * 6 - Math.PI * 3;
+          const strand = i % 2 === 0 ? 1 : -1;
+          vertices.push({
+            x: Math.cos(t) * 85 * strand,
+            y: (i / count - 0.5) * 270,
+            z: Math.sin(t) * 85 * strand
+          });
+        }
+      } else if (type === 'torus') {
+        const R = 110, r = 48;
+        for (let i = 0; i < count; i++) {
+          const u = (i / count) * Math.PI * 2;
+          const v = ((i * 7) / count) * Math.PI * 2;
+          vertices.push({
+            x: (R + r * Math.cos(v)) * Math.cos(u),
+            y: (R + r * Math.cos(v)) * Math.sin(u),
+            z: r * Math.sin(v)
+          });
+        }
+      }
+      document.getElementById('nodeCounter').textContent = vertices.length;
+    }
+    buildShape('sphere');
+
+    function changeShape(shape, btnEl) {
+      currentShape = shape;
+      document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      document.getElementById('shapeLabel').textContent = 'MODE: ' + shape.toUpperCase();
+      buildShape(shape);
+      playChord([330, 440, 659.25]);
+    }
+
+    function triggerOverclock() {
+      shockwaveRadius = 10;
+      playChord([220, 277.18, 329.63, 440, 659.25]);
+    }
+
+    coreCanvas.addEventListener('mousedown', (e) => {
+      isDraggingCore = true;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+    });
+    window.addEventListener('mouseup', () => isDraggingCore = false);
+    window.addEventListener('mousemove', (e) => {
+      if (!isDraggingCore) return;
+      rotY += (e.clientX - lastMouseX) * 0.008;
+      rotX += (e.clientY - lastMouseY) * 0.008;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+    });
+
+    let lastFrameTime = performance.now(), frames = 0;
+    function renderCore(now) {
+      frames++;
+      if (now - lastFrameTime >= 1000) {
+        document.getElementById('fpsCounter').textContent = frames + ' FPS';
+        frames = 0;
+        lastFrameTime = now;
+      }
+
+      const warp = parseFloat(document.getElementById('warpSlider').value || 1);
+      if (!isDraggingCore) {
+        rotY += 0.007 * warp;
+        rotX += 0.003 * warp;
+      }
+
+      ctx3d.clearRect(0, 0, coreCanvas.width, coreCanvas.height);
+      const cx = coreCanvas.width / 2;
+      const cy = coreCanvas.height / 2;
+
+      const projected = vertices.map(v => {
+        // Rotate Y
+        let x1 = v.x * Math.cos(rotY) - v.z * Math.sin(rotY);
+        let z1 = v.z * Math.cos(rotY) + v.x * Math.sin(rotY);
+        // Rotate X
+        let y2 = v.y * Math.cos(rotX) - z1 * Math.sin(rotX);
+        let z2 = z1 * Math.cos(rotX) + v.y * Math.sin(rotX);
+
+        const fov = 360;
+        const scale = fov / (fov + z2 + 220);
+        return {
+          px: cx + x1 * scale,
+          py: cy + y2 * scale,
+          z: z2,
+          scale
+        };
+      });
+
+      // Draw neural connections
+      ctx3d.lineWidth = 0.8;
+      for (let i = 0; i < projected.length; i++) {
+        for (let j = i + 1; j < projected.length; j++) {
+          const dx = projected[i].px - projected[j].px;
+          const dy = projected[i].py - projected[j].py;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 62) {
+            const alpha = (1 - dist / 62) * 0.35;
+            ctx3d.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+            ctx3d.beginPath();
+            ctx3d.moveTo(projected[i].px, projected[i].py);
+            ctx3d.lineTo(projected[j].px, projected[j].py);
+            ctx3d.stroke();
+          }
+        }
+      }
+
+      // Draw vertices
+      projected.forEach(p => {
+        const r = Math.max(1.5, 4 * p.scale);
+        ctx3d.fillStyle = p.z < 0 ? '#06b6d4' : '#ec4899';
+        ctx3d.beginPath();
+        ctx3d.arc(p.px, p.py, r, 0, Math.PI * 2);
+        ctx3d.fill();
+      });
+
+      // Overclock shockwave ring
+      if (shockwaveRadius > 0) {
+        ctx3d.strokeStyle = `rgba(6, 182, 212, ${Math.max(0, 1 - shockwaveRadius / 260)})`;
+        ctx3d.lineWidth = 3;
+        ctx3d.beginPath();
+        ctx3d.arc(cx, cy, shockwaveRadius, 0, Math.PI * 2);
+        ctx3d.stroke();
+        shockwaveRadius += 7;
+        if (shockwaveRadius > 260) shockwaveRadius = 0;
+      }
+
+      requestAnimationFrame(renderCore);
+    }
+    requestAnimationFrame(renderCore);
+
+    /* =========================================================
+       4. NOTION WORKSPACE & KANBAN INTERACTIVITY
+       ========================================================= */
+    const icons = ['🚀', '⚡', '🌌', '🧠', '💎', '🔥'];
+    let iconIdx = 0;
+    function cycleIcon() {
+      iconIdx = (iconIdx + 1) % icons.length;
+      document.getElementById('pageIcon').textContent = icons[iconIdx];
+      playTick(740);
+    }
+
+    const banners = [
+      'linear-gradient(120deg, #6366f1, #06b6d4, #ec4899)',
+      'linear-gradient(120deg, #f59e0b, #ef4444, #7c3aed)',
+      'linear-gradient(120deg, #10b981, #0ea5e9, #3b82f6)'
+    ];
+    let bannerIdx = 0;
+    function cycleBanner() {
+      bannerIdx = (bannerIdx + 1) % banners.length;
+      document.getElementById('notionBanner').style.background = banners[bannerIdx];
+      playTick(580);
+    }
+
+    function addBlock(type) {
+      const list = document.getElementById('blockList');
+      const div = document.createElement('div');
+      div.className = 'notion-block';
+      if (type === 'callout') {
+        div.innerHTML = `<span contenteditable="true">💡 <strong>Catatan Baru:</strong> Klik teks ini untuk mengedit ide langsung di browser.</span><button class="btn" onclick="this.parentElement.remove()">✕</button>`;
+      } else if (type === 'todo') {
+        div.innerHTML = `<label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;"><input type="checkbox" onchange="playTick()" /><span contenteditable="true">Target baru untuk shinexyz.my.id</span></label><button class="btn" onclick="this.parentElement.remove()">✕</button>`;
+      } else if (type === 'metric') {
+        const cpu = Math.floor(Math.random() * 15) + 8;
+        div.innerHTML = `<span>📊 <strong>Telemetry Node:</strong> Penggunaan CPU VPS stabil di <strong>${cpu}%</strong> • SSL Aktif</span><button class="btn" onclick="this.parentElement.remove()">✕</button>`;
+      } else {
+        div.innerHTML = `<code>sudo systemctl reload nginx && echo "shinexyz.my.id READY"</code><button class="btn" onclick="this.parentElement.remove()">✕</button>`;
+      }
+      list.prepend(div);
+      playTick(620);
+    }
+
+    function advanceCard(cardEl) {
+      let col = parseInt(cardEl.getAttribute('data-col'), 10);
+      col = (col + 1) % 3;
+      cardEl.setAttribute('data-col', col);
+      document.getElementById('col-' + col).appendChild(cardEl);
+      playTick(col === 2 ? 880 : 540);
+    }
+
+    /* =========================================================
+       5. BEZIER NODE GRAPH & GRAVITY VORTEX SANDBOX
+       ========================================================= */
+    const nodeCanvas = document.getElementById('nodeCanvas');
+    const nCtx = nodeCanvas.getContext('2d');
+    const nodes = [
+      { x: 55, y: 75, title: 'Prompt Input', color: '#6366f1' },
+      { x: 210, y: 50, title: 'ASTRA Motion', color: '#06b6d4' },
+      { x: 210, y: 185, title: 'Synth Engine', color: '#10b981' },
+      { x: 375, y: 120, title: 'WebGL Output', color: '#ec4899' }
+    ];
+    let draggingNode = null;
+    let packetT = 0;
+
+    function resizeStudioCanvases() {
+      [nodeCanvas, document.getElementById('vortexCanvas'), document.getElementById('xyCanvas')].forEach(c => {
+        const r = c.getBoundingClientRect();
+        c.width = r.width;
+        c.height = r.height;
+      });
+    }
+    window.addEventListener('resize', resizeStudioCanvases);
+    setTimeout(resizeStudioCanvases, 50);
+
+    nodeCanvas.addEventListener('mousedown', (e) => {
+      const r = nodeCanvas.getBoundingClientRect();
+      const mx = e.clientX - r.left, my = e.clientY - r.top;
+      nodes.forEach(n => {
+        if (mx >= n.x && mx <= n.x + 115 && my >= n.y && my <= n.y + 44) {
+          draggingNode = n;
+        }
+      });
+    });
+    window.addEventListener('mouseup', () => draggingNode = null);
+    nodeCanvas.addEventListener('mousemove', (e) => {
+      if (!draggingNode) return;
+      const r = nodeCanvas.getBoundingClientRect();
+      draggingNode.x = Math.max(10, Math.min(nodeCanvas.width - 125, e.clientX - r.left - 55));
+      draggingNode.y = Math.max(10, Math.min(nodeCanvas.height - 54, e.clientY - r.top - 22));
+    });
+
+    function spawnDataPackets() {
+      packetT = 0.01;
+      playChord([440, 554.37, 659.25]);
+    }
+
+    function drawBezierLink(a, b) {
+      const x1 = a.x + 115, y1 = a.y + 22;
+      const x2 = b.x, y2 = b.y + 22;
+      const cx1 = x1 + (x2 - x1) * 0.5;
+      const cx2 = x1 + (x2 - x1) * 0.5;
+
+      nCtx.strokeStyle = 'rgba(143, 155, 183, 0.45)';
+      nCtx.lineWidth = 2;
+      nCtx.beginPath();
+      nCtx.moveTo(x1, y1);
+      nCtx.bezierCurveTo(cx1, y1, cx2, y2, x2, y2);
+      nCtx.stroke();
+
+      // Animated pulse dot
+      const t = (performance.now() * 0.0005 + packetT) % 1;
+      const px = Math.pow(1 - t, 3) * x1 + 3 * Math.pow(1 - t, 2) * t * cx1 + 3 * (1 - t) * t * t * cx2 + Math.pow(t, 3) * x2;
+      const py = Math.pow(1 - t, 3) * y1 + 3 * Math.pow(1 - t, 2) * t * y1 + 3 * (1 - t) * t * t * y2 + Math.pow(t, 3) * y2;
+      nCtx.fillStyle = '#06b6d4';
+      nCtx.beginPath();
+      nCtx.arc(px, py, 4, 0, Math.PI * 2);
+      nCtx.fill();
+    }
+
+    function renderNodeGraph() {
+      nCtx.clearRect(0, 0, nodeCanvas.width, nodeCanvas.height);
+      drawBezierLink(nodes[0], nodes[1]);
+      drawBezierLink(nodes[0], nodes[2]);
+      drawBezierLink(nodes[1], nodes[3]);
+      drawBezierLink(nodes[2], nodes[3]);
+
+      nodes.forEach(n => {
+        nCtx.fillStyle = 'rgba(23, 27, 44, 0.92)';
+        nCtx.strokeStyle = n.color;
+        nCtx.lineWidth = 1.8;
+        nCtx.beginPath();
+        nCtx.roundRect(n.x, n.y, 115, 44, 9);
+        nCtx.fill();
+        nCtx.stroke();
+
+        nCtx.fillStyle = '#f3f6ff';
+        nCtx.font = 'bold 11px sans-serif';
+        nCtx.fillText(n.title, n.x + 12, n.y + 26);
+      });
+      requestAnimationFrame(renderNodeGraph);
+    }
+    requestAnimationFrame(renderNodeGraph);
+
+    // Gravity Vortex Sandbox
+    const vCanvas = document.getElementById('vortexCanvas');
+    const vCtx = vCanvas.getContext('2d');
+    const particles = Array.from({ length: 120 }, () => ({
+      x: Math.random() * 450,
+      y: Math.random() * 280,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      hue: Math.random() * 120 + 180
+    }));
+    let attractor = { x: 240, y: 150 };
+
+    vCanvas.addEventListener('mousemove', (e) => {
+      const r = vCanvas.getBoundingClientRect();
+      attractor.x = e.clientX - r.left;
+      attractor.y = e.clientY - r.top;
+    });
+
+    function burstParticles() {
+      particles.forEach(p => {
+        p.vx = (Math.random() - 0.5) * 14;
+        p.vy = (Math.random() - 0.5) * 14;
+      });
+      playChord([196, 293.66, 392]);
+    }
+
+    function renderVortex() {
+      vCtx.fillStyle = 'rgba(5, 7, 14, 0.22)';
+      vCtx.fillRect(0, 0, vCanvas.width, vCanvas.height);
+
+      particles.forEach(p => {
+        const dx = attractor.x - p.x;
+        const dy = attractor.y - p.y;
+        const dist = Math.max(25, Math.sqrt(dx * dx + dy * dy));
+        p.vx += (dx / dist) * 0.22 - (dy / dist) * 0.15;
+        p.vy += (dy / dist) * 0.22 + (dx / dist) * 0.15;
+        p.vx *= 0.96;
+        p.vy *= 0.96;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        vCtx.fillStyle = `hsl(${p.hue}, 90%, 65%)`;
+        vCtx.beginPath();
+        vCtx.arc(p.x, p.y, 2.3, 0, Math.PI * 2);
+        vCtx.fill();
+      });
+
+      vCtx.strokeStyle = 'rgba(6, 182, 212, 0.5)';
+      vCtx.beginPath();
+      vCtx.arc(attractor.x, attractor.y, 12, 0, Math.PI * 2);
+      vCtx.stroke();
+
+      requestAnimationFrame(renderVortex);
+    }
+    requestAnimationFrame(renderVortex);
+
+    /* =========================================================
+       6. 8-STEP SEQUENCER & XY KAOSS PAD
+       ========================================================= */
+    const seqContainer = document.getElementById('seqContainer');
+    const trackFreqs = [523.25, 392.00, 329.63, 130.81]; // C5, G4, E4, C3
+    const seqState = Array.from({ length: 4 }, () => Array(8).fill(false));
+    let seqStep = 0, seqTimer = null;
+
+    function buildSequencerUI() {
+      seqContainer.innerHTML = '';
+      for (let r = 0; r < 4; r++) {
+        const row = document.createElement('div');
+        row.className = 'seq-grid';
+        for (let c = 0; c < 8; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'seq-cell' + (seqState[r][c] ? ' active' : '');
+          cell.id = `cell-${r}-${c}`;
+          cell.onclick = () => {
+            seqState[r][c] = !seqState[r][c];
+            cell.classList.toggle('active');
+            if (seqState[r][c]) playTick(trackFreqs[r], 0.12, 'triangle');
+          };
+          row.appendChild(cell);
+        }
+        seqContainer.appendChild(row);
+      }
+    }
+    // Default pattern
+    seqState[0][0] = seqState[0][4] = seqState[1][2] = seqState[2][6] = seqState[3][0] = seqState[3][3] = true;
+    buildSequencerUI();
+
+    function toggleSequencer() {
+      const btn = document.getElementById('seqPlayBtn');
+      if (seqTimer) {
+        clearInterval(seqTimer);
+        seqTimer = null;
+        btn.textContent = '▶ Play Loop';
+        document.querySelectorAll('.seq-cell').forEach(c => c.classList.remove('playing'));
+      } else {
+        btn.textContent = '⏹ Stop Loop';
+        seqTimer = setInterval(() => {
+          document.querySelectorAll('.seq-cell').forEach(c => c.classList.remove('playing'));
+          for (let r = 0; r < 4; r++) {
+            const cell = document.getElementById(`cell-${r}-${seqStep}`);
+            if (cell) cell.classList.add('playing');
+            if (seqState[r][seqStep]) {
+              playTick(trackFreqs[r], 0.16, r === 3 ? 'sawtooth' : 'triangle');
+            }
+          }
+          seqStep = (seqStep + 1) % 8;
+        }, 210);
+      }
+    }
+
+    function randomizeSequencer() {
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 8; c++) {
+          seqState[r][c] = Math.random() > 0.65;
+        }
+      }
+      buildSequencerUI();
+      playTick(587.33);
+    }
+
+    // XY Pad
+    const xyCanvas = document.getElementById('xyCanvas');
+    const xyCtx = xyCanvas.getContext('2d');
+    let xyActive = false, xyX = 120, xyY = 100;
+
+    function triggerXY(e) {
+      const r = xyCanvas.getBoundingClientRect();
+      xyX = Math.max(0, Math.min(xyCanvas.width, e.clientX - r.left));
+      xyY = Math.max(0, Math.min(xyCanvas.height, e.clientY - r.top));
+      const freq = Math.round(140 + (xyX / xyCanvas.width) * 680);
+      document.getElementById('freqReadout').textContent = freq + ' Hz';
+      playTick(freq, 0.09, 'sine');
+    }
+
+    xyCanvas.addEventListener('mousedown', (e) => { xyActive = true; triggerXY(e); });
+    window.addEventListener('mouseup', () => xyActive = false);
+    xyCanvas.addEventListener('mousemove', (e) => { if (xyActive) triggerXY(e); });
+
+    function renderXY() {
+      xyCtx.fillStyle = 'rgba(5, 7, 14, 0.25)';
+      xyCtx.fillRect(0, 0, xyCanvas.width, xyCanvas.height);
+
+      xyCtx.strokeStyle = 'rgba(99, 102, 241, 0.35)';
+      xyCtx.beginPath();
+      xyCtx.moveTo(xyX, 0); xyCtx.lineTo(xyX, xyCanvas.height);
+      xyCtx.moveTo(0, xyY); xyCtx.lineTo(xyCanvas.width, xyY);
+      xyCtx.stroke();
+
+      xyCtx.fillStyle = '#ec4899';
+      xyCtx.beginPath();
+      xyCtx.arc(xyX, xyY, 8, 0, Math.PI * 2);
+      xyCtx.fill();
+
+      requestAnimationFrame(renderXY);
+    }
+    requestAnimationFrame(renderXY);
+  </script>
+</body>
+</html>
